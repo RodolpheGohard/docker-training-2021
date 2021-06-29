@@ -1,6 +1,4 @@
-<!-- .slide: class="transition-white sfeir-bg-blue" -->
-
-# Images et Containers
+# Images and Containers
 
 ##--##
 
@@ -32,18 +30,7 @@ Notes:
 
 ##--##
 
-<!-- .slide: class="sfeir-bg-white-5" -->
-
-# VM et Containers
-
-![center](./assets/images/images_et_containers/vm_et_container.png) <!-- .element: width="100%" -->
-
-Notes:
-On peut mélanger les deux pour plus d’isolation (multi-tenant, ...)
-
-##--##
-
-# Docker sur
+# Docker on
 # Toolbox / Docker4Win / Docker4Mac
 
 <div class="left">
@@ -71,12 +58,74 @@ Dans ces 3 cas :
 * Docker4(Win/Mac) : intégration réseau et montage de fs facilité
 
 ##--##
+<!-- .slide: class="sfeir-bg-white-5" -->
+
+# Dependency to host OS
+
+* Binary compat with host kernel:
+  * Linux / x86
+  * Linux / arm
+  * Windows 10 / x86 = "Windows Containers"
+  * IBM Z Systems
+* multi-OS "Manifests" (redirections)
+* Today, we mostly use x86_64 Linux containers / x86
+
+Notes:
+Les commandes/processus sont exécutées sur l’OS (noyau/kernel) de hôte  
+⇒ il faut que les binaires de l’image soient compatibles  
+⇒ 4 architecture == 4 images différentes  
+
+Manifests:
+* lien vers les images pour chaque archi
+* stockée dans la registry
+* redirection suivie par le daemon docker
+* pas de commande manifests dans le client docker ⇒ third party tools
+
+La formation est orientée Linux / x86
+
+##--##
+
+<!-- .slide: class="sfeir-bg-white-4 with-code big-code" -->
+
+# Your first image
+
+Exercise 7 <!-- .element: class="exo" -->
+
+* Fetch an **alpine** image then execute a interactive container with it :
+
+```docker
+docker image pull alpine:3.5
+docker container run -it --name node_ctn alpine:3.5
+```
+
+* Install **nodejs** there then leave the container :
+
+```bash
+apk add --update nodejs
+exit
+```
+
+* Create a new image from the container :
+
+```docker
+docker container commit node_ctn mynodejs
+```
+
+Notes:
+Objectif :  
+création d’une nouvelle image “commitée” à partir d’un container ⇒ aka. snapshot
+
+node_ctn = nom du container  
+mynodejs = nom de la nouvelle image
+
+
+##--##
 
 <!-- .slide: class="sfeir-bg-white-5" -->
 
 # Image layers
 
-* Image en lecture seule -> immutabilité
+* Image are read-only -> immutability
 * Copy-On-Write strategy
 
 <div class="center" style="margin-top: 5rem;">
@@ -103,7 +152,7 @@ les layers sont le résultat des fichiers écrits par des commandes apt-get, ...
 
 # Image layers 2
 
-* Espace disque
+* Storage
 * Performances
 
 ![center h-600](./assets/images/images_et_containers/saving-space.png)
@@ -123,87 +172,26 @@ Performances : le mapping des fichiers de l’image stockée sur disque vers la 
 
 ##--##
 
-<!-- .slide: class="sfeir-bg-white-5" -->
-
-# Dépendance à l'OS hôte
-
-* Compatibilité binaire avec le noyau de l'OS hôte :
-  * Linux / x86
-  * Linux / arm
-  * Windows 10 / x86 = "Windows Containers"
-  * IBM Z Systems
-* "Manifestes" multi-OS (redirections)
-* Aujourd'hui, on ne parle que de containers Linux / x86
-
-Notes:
-Les commandes/processus sont exécutées sur l’OS (noyau/kernel) de hôte  
-⇒ il faut que les binaires de l’image soient compatibles  
-⇒ 4 architecture == 4 images différentes  
-
-Manifests:
-* lien vers les images pour chaque archi
-* stockée dans la registry
-* redirection suivie par le daemon docker
-* pas de commande manifests dans le client docker ⇒ third party tools
-
-La formation est orientée Linux / x86
-
-##--##
 
 <!-- .slide: class="sfeir-bg-white-4 with-code big-code" -->
 
-# Votre première image
+# Share images
 
-Exo 7 <!-- .element: class="exo" -->
+Exercise 8 <!-- .element: class="exo" -->
 
-* Récupérez une image **alpine** et lancez-là en mode intéractif :
-
-```docker
-docker image pull alpine:3.5
-docker container run -it --name node_ctn alpine:3.5
-```
-
-* Installez **nodejs** puis quittez le container :
-
-```bash
-apk add --update nodejs
-exit
-```
-
-* Créez une nouvelle image à partir du container :
-
-```docker
-docker container commit node_ctn mynodejs
-```
-
-Notes:
-Objectif :  
-création d’une nouvelle image “commitée” à partir d’un container ⇒ aka. snapshot
-
-node_ctn = nom du container  
-mynodejs = nom de la nouvelle image
-
-##--##
-
-<!-- .slide: class="sfeir-bg-white-4 with-code big-code" -->
-
-# Partagez des images
-
-Exo 8 <!-- .element: class="exo" -->
-
-* Taggez votre image :
+* Tag your image :
 
 ```docker
 docker image tag mynodejs <dockerHubId>/nodejs:1.0
 ```
 
-* Listez vos images locales. Que constatez-vous ?
+* List local images. Notice anything ?
 
 ```docker
 docker image ls
 ```
 
-* Publiez votre image vers votre dépôt sur le Hub Docker :
+* Publish your image to your repository to Docker Hub:
 
 ```docker
 docker login
@@ -219,12 +207,12 @@ On peut associer plusieurs tags à une même image.
 
 <!-- .slide: class="sfeir-bg-white-5" -->
 
-# Images et tags
+# Images and tags
 
-* Image ID = sha256 du contenu
+* Image ID = sha256 of the contents
 * Tag :
-  * pour identifier facilement une image
-  * pour déterminer le dépôt d'origine
+  * identifying an image quickly
+  * identify the repository
 
 Pattern : <!-- .element: class="underline" -->
 
@@ -235,14 +223,18 @@ Pattern : <!-- .element: class="underline" -->
 Exemples : <!-- .element: class="underline" -->
 
 <div class="center border" style="margin-top: 1rem;">
+<span class="danger">node</span>
+<br/>
+<span class="danger">node</span>:<span class="success">latest</span>
+<br/>
 <span class="warning">hub.docker.com</span>/<span class="primary">library</span>/<span class="danger">node</span>:<span class="success">latest</span>
 <br/>
 <span class="warning">hub.docker.com</span>/<span class="primary">zbbfufu</span>/<span class="danger">node</span>:<span class="success">8.0</span>
 <br/>
 <span class="warning">registry.sfeir.com:9000</span>/<span class="primary">taiebm</span>/<span class="danger">cordova</span>:<span class="success">5.0-test</span>
 </div>
-Notes:  
-Une image est identifiée de façon unique par son ID, le sha256 du contenu.  
+Notes:
+An image est identifiée de façon unique par son ID, le sha256 du contenu.  
 La plupart du temps les ids sont tronqués à l’affichage, comme dans git.  
 
 Pour simplifier l’accès aux images, on y applique des tags.  
