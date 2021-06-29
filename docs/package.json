@@ -1,7 +1,7 @@
 {
   "name": "sfeirschooldocker",
   "version": "1.0.0",
-  "description": "Sfeir School Docker with revealJS",
+  "description": "Docker Training with revealJS",
   "main": "index.js",
   "scripts": {
     "sass": "node-sass ./scss/docker_200.scss -o ./css/ --source-map=true --watch=\"scss\" --recursive=\"scss\"",

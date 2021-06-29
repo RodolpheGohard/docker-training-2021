@@ -81,7 +81,7 @@ Exercise 3 <!-- .element: class="exo" -->
 
 ```docker
 docker container run -d busybox \
-  sh -c 'while true; do echo Hello sfeir school; sleep 1; done'
+  sh -c 'while true; do echo Hello docker; sleep 1; done'
 ```
 
 * List containers then find your id and container name:
